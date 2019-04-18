@@ -27,10 +27,10 @@ DROP TABLE IF EXISTS `dim_field`;
 CREATE TABLE `dim_field` (
   `fieldid` int(11) NOT NULL AUTO_INCREMENT,
   `fielddesc` varchar(255) DEFAULT NULL,
-  `typer` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`fieldid`),
-  UNIQUE KEY `fielddesc` (`fielddesc`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
+  `type` varchar(255) DEFAULT NULL,
+  `setid` int(11) NOT NULL,
+  PRIMARY KEY (`fieldid`,`setid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,6 @@ CREATE TABLE `dim_field` (
 
 LOCK TABLES `dim_field` WRITE;
 /*!40000 ALTER TABLE `dim_field` DISABLE KEYS */;
-INSERT INTO `dim_field` VALUES (7,'prodid',NULL),(8,'cid',NULL),(9,'ctypeid',NULL),(10,'pid',NULL),(11,'ptypeid',NULL),(12,'weight',NULL),(13,'pctcinp',NULL),(14,'pctpinc',NULL),(25,'variable',NULL),(26,' Sum of oldv ',NULL),(27,' Sum of newv ',NULL),(28,' Sum of Field1 ',NULL),(31,'Sumofoldv',NULL),(32,'Sumofnewv',NULL),(33,'SumofField1',NULL),(50,'bucket',NULL);
 /*!40000 ALTER TABLE `dim_field` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,11 +53,14 @@ CREATE TABLE `dim_file` (
   `fileid` int(11) NOT NULL AUTO_INCREMENT,
   `filedesc` varchar(255) DEFAULT NULL,
   `extension` varchar(255) DEFAULT NULL,
-  `mime` varchar(255) DEFAULT NULL,
-  `typer` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`fileid`),
-  UNIQUE KEY `filedesc` (`filedesc`)
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=latin1;
+  `MD5` varchar(32) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `sets` int(11) DEFAULT NULL,
+  `creation_date` datetime DEFAULT NULL,
+  `records` int(11) DEFAULT NULL,
+  `fields` int(11) DEFAULT NULL,
+  PRIMARY KEY (`fileid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +69,7 @@ CREATE TABLE `dim_file` (
 
 LOCK TABLES `dim_file` WRITE;
 /*!40000 ALTER TABLE `dim_file` DISABLE KEYS */;
-INSERT INTO `dim_file` VALUES (1,'barimage.bmp',NULL,NULL,'raster-image'),(2,'MPZ SCHEMA 20190327.xlsx',NULL,NULL,'executablearchivedocument'),(3,'x2.csv',NULL,NULL,'text/ascii'),(121,'issues.csv',NULL,NULL,'text/ascii'),(128,'issues - Copy.csv',NULL,NULL,'text/ascii'),(129,'mpz_base_variable_tactic_ref_ca.csv',NULL,NULL,'text/ascii');
+INSERT INTO `dim_file` VALUES (1,'Book1.csv','.csv','9f120146a38aebaefda0479e3a94283b','text',1,'2019-04-18 14:06:14',NULL,NULL),(2,'Book1.csv','.csv','9f120146a38aebaefda0479e3a94283b','text',1,'2019-04-18 14:06:36',NULL,NULL);
 /*!40000 ALTER TABLE `dim_file` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,10 +83,15 @@ DROP TABLE IF EXISTS `dim_set`;
 CREATE TABLE `dim_set` (
   `setid` int(11) NOT NULL AUTO_INCREMENT,
   `setdesc` varchar(255) DEFAULT NULL,
-  `typer` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`setid`),
-  UNIQUE KEY `setdesc` (`setdesc`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+  `extension` varchar(255) DEFAULT NULL,
+  `MD5` varchar(32) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `creation_date` datetime DEFAULT NULL,
+  `fileid` int(11) NOT NULL,
+  `records` int(11) DEFAULT NULL,
+  `fields` int(11) DEFAULT NULL,
+  PRIMARY KEY (`setid`,`fileid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,31 +100,8 @@ CREATE TABLE `dim_set` (
 
 LOCK TABLES `dim_set` WRITE;
 /*!40000 ALTER TABLE `dim_set` DISABLE KEYS */;
-INSERT INTO `dim_set` VALUES (1,'x2.csv',NULL),(11,'issues.csv',NULL),(18,'issues - Copy.csv',NULL),(19,'mpz_base_variable_tactic_ref_ca.csv',NULL);
+INSERT INTO `dim_set` VALUES (1,'Book1.csv','.csv','9f120146a38aebaefda0479e3a94283b','text','2019-04-18 14:06:14',1,40,NULL),(2,'Book1.csv','.csv','9f120146a38aebaefda0479e3a94283b','text','2019-04-18 14:06:36',2,40,NULL);
 /*!40000 ALTER TABLE `dim_set` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lkup_file_set`
---
-
-DROP TABLE IF EXISTS `lkup_file_set`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lkup_file_set` (
-  `fileid` int(11) NOT NULL,
-  `setid` int(11) NOT NULL,
-  PRIMARY KEY (`fileid`,`setid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `lkup_file_set`
---
-
-LOCK TABLES `lkup_file_set` WRITE;
-/*!40000 ALTER TABLE `lkup_file_set` DISABLE KEYS */;
-/*!40000 ALTER TABLE `lkup_file_set` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -140,38 +124,187 @@ CREATE TABLE `lkup_set_field` (
 
 LOCK TABLES `lkup_set_field` WRITE;
 /*!40000 ALTER TABLE `lkup_set_field` DISABLE KEYS */;
-INSERT INTO `lkup_set_field` VALUES (1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(11,7),(11,25),(11,26),(11,27),(11,28),(11,31),(11,32),(11,33),(18,7),(18,25),(18,31),(18,32),(18,33),(19,25),(19,50);
 /*!40000 ALTER TABLE `lkup_set_field` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `temp1`
+-- Table structure for table `tblfields`
 --
 
-DROP TABLE IF EXISTS `temp1`;
+DROP TABLE IF EXISTS `tblfields`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `temp1` (
-  `index` bigint(20) DEFAULT NULL,
-  `variable` varchar(63) DEFAULT NULL,
-  `bucket` varchar(63) DEFAULT NULL,
-  KEY `ix_temp1_index` (`index`)
+CREATE TABLE `tblfields` (
+  `original_name` varchar(1000) DEFAULT NULL,
+  `clean_name` varchar(255) DEFAULT NULL,
+  `final_name` varchar(255) DEFAULT NULL,
+  `data_type` varchar(255) DEFAULT NULL,
+  `mapsto` varchar(255) DEFAULT 'NONE',
+  `unique_values` int(11) DEFAULT NULL,
+  `cardinality` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `temp1`
+-- Dumping data for table `tblfields`
 --
 
-LOCK TABLES `temp1` WRITE;
-/*!40000 ALTER TABLE `temp1` DISABLE KEYS */;
-INSERT INTO `temp1` VALUES (0,'cbs_gas','BASE'),(1,'cbs_temp','BASE'),(2,'cbs_unemp','BASE'),(3,'comp_budlight_other_spend','BASE'),(4,'comp_budweiser_other_spend','BASE'),(5,'comp_corona_other_spend','BASE'),(6,'comp_heinekennv_other_spend','BASE'),(7,'comp_TV_BUDLIGHT_spend','BASE'),(8,'comp_TV_BUDWEISER_spend','BASE'),(9,'comp_TV_CANADIAN_spend','BASE'),(10,'comp_TV_CANADIAN67_spend','BASE'),(11,'comp_TV_COORSBANQUET_spend','BASE'),(12,'comp_TV_COORSLIGHT_spend','BASE'),(13,'comp_TV_CORONA_spend','BASE'),(14,'comp_TV_HEINEKENNV_spend','BASE'),(15,'comp_TV_MGD_spend','BASE'),(16,'comp_TV_STELLAARTOIS_spend','BASE'),(17,'comp1_netpr','BASE'),(18,'comp10_netpr','BASE'),(19,'comp11_netpr','BASE'),(20,'comp2_netpr','BASE'),(21,'comp3_netpr','BASE'),(22,'comp4_netpr','BASE'),(23,'comp5_netpr','BASE'),(24,'comp6_netpr','BASE'),(25,'comp7_netpr','BASE'),(26,'comp8_netpr','BASE'),(27,'comp9_netpr','BASE'),(28,'hol_canada','BASE'),(29,'hol_newyear','BASE'),(30,'hol_province','BASE'),(31,'hol_thx','BASE'),(32,'hol_victoria','BASE'),(33,'hol_xmass','BASE'),(34,'nit_cat_economy','BASE'),(35,'nit_catshr_abovepremium','BASE'),(36,'season','BASE'),(37,'stm_basenetpr','BASE'),(38,'stm_pts_ma13','BASE'),(39,'comp_heineken00_dig_imps','COMP'),(40,'comp_heineken00_ooh_cost','COMP'),(41,'comp_heineken00_social_imps','COMP'),(42,'comp_heineken00_tv_trps','COMP'),(43,'mec_digao_imps','DIGITAL'),(44,'mec_digonvideo_imps','DIGITAL'),(45,'stm_pctdisc12pk','DISCOUNTING'),(46,'stm_pctdisc12pk_cost','DISCOUNTING'),(47,'stm_pctdisc18pk','DISCOUNTING'),(48,'stm_pctdisc18pk_cost','DISCOUNTING'),(49,'stm_pctdisc24pk','DISCOUNTING'),(50,'stm_pctdisc24pk_cost','DISCOUNTING'),(51,'stm_pctdisc6pk','DISCOUNTING'),(52,'stm_pctdisc6pk_cost','DISCOUNTING'),(53,'stm_pctdiscaopk','DISCOUNTING'),(54,'stm_pctdiscaopk_cost','DISCOUNTING'),(55,'DV','DV'),(56,'mec_ooh_cost','OOH'),(57,'mec_publicrelations_imps','PR'),(58,'mec_print_cost','PRNT'),(59,'mec_print20132016_cost','PRNT'),(60,'mec_print2017_cost','PRNT'),(61,'moc_display_cost','PTE'),(62,'moc_incentive_cost','PTE'),(63,'moc_merch_cost','PTE'),(64,'moc_pos_cost','PTE'),(65,'moc_sampling_cost','PTE'),(66,'moc_sponsor_cost','PTE'),(67,'moc_sweeps_cost','PTE'),(68,'mec_radio_grps','RADIO'),(69,'mec_radio2013201704_grps','RADIO'),(70,'mec_radio20170506_grps','RADIO'),(71,'lto_stuff','RETAILING'),(72,'moc_retailpromotion_cost','RETAILING'),(73,'mec_digsearch_clicks','SEARCH'),(74,'mec_digsnap_imps','SOCIAL'),(75,'mec_fb_imps','SOCIAL'),(76,'mec_insta_imps','SOCIAL'),(77,'mec_twtr_imps','SOCIAL'),(78,'mec_tv_trps','TV'),(79,'mec_tv20132016_trps','TV'),(80,'mec_tv2017_trps','TV');
-/*!40000 ALTER TABLE `temp1` ENABLE KEYS */;
+LOCK TABLES `tblfields` WRITE;
+/*!40000 ALTER TABLE `tblfields` DISABLE KEYS */;
+INSERT INTO `tblfields` VALUES ('product','product','product','text','NONE',2,0.95),('week','week','period','text','NONE',39,0.025),('volume','volume','volume','double','NONE',40,0),('Market','Market','Market','text','NONE',2,0.95);
+/*!40000 ALTER TABLE `tblfields` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
 -- Dumping routines for database 'dbfreeloadr'
 --
+/*!50003 DROP FUNCTION IF EXISTS `cleanstring` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `cleanstring`(input TEXT) RETURNS text CHARSET latin1
+BEGIN
+  RETURN upper(replace(
+  replace(replace(replace(replace(replace(replace(replace(
+  replace(replace(replace(replace(replace(replace(replace(replace(
+  replace(replace(replace(replace(replace(replace(replace(replace(
+  replace(replace(
+  replace(replace(replace(replace(replace(input,'?',''),'#',''),'$',''),'@',''),'{','')
+  
+  
+  ,'}',''),'!',''),'^',''),'<',''),'>',''),'[',''),']',''),'|',''),'\\',''),'*',''),'`',''),'~',''),'%',''),';',''),',',''),':',''),'"',''),'.',''),'&',''),'/',''),'+',''),'(',''),')',''),'-',''),'''',''),' ',''));
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `guessdate` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `guessdate`(input TEXT) RETURNS text CHARSET latin1
+BEGIN
+if (str_to_date(input,'%Y-%m-%d') is not null) then
+	return str_to_date(input,'%Y-%m-%d');
+end if;
+if (str_to_date(input,'%Y/%m/%d') is not null) then
+	set input=str_to_date(input,'%Y/%m/%d');
+	return input;
+end if;
+if (str_to_date(input,'%m/%d/%Y') is not null) then
+	set input=str_to_date(input,'%m/%d/%Y');
+	return input;
+end if;
+if (str_to_date(input,'%b %d, %Y') is not null) then
+	set input=str_to_date(input,'%b %d, %Y');
+	return input;
+end if;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_cardinality` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cardinality`()
+BEGIN
+declare done INT DEFAULT FALSE;
+declare vColumn varchar(255);
+declare testn INT;
+declare vOutputSQL varchar(1000);
+declare vSpend varchar(255);
+declare vImps varchar(255);
+declare cur_header cursor for
+select clean_name
+from tblFields;
+
+
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+/***insert any fact names into dim_fact where the fact is not in dim fact****/
+
+/***now begin inserting****/
+open cur_header;
+read_loop: LOOP
+
+fetch cur_header into vColumn;
+IF done THEN
+	LEAVE read_loop;
+END IF;
+
+set @ex=concat('select @val:= count(*) 
+               from (select distinct ',vcolumn,' from temp1) a');
+prepare stmt from @ex;
+execute stmt;
+deallocate prepare stmt;
+update tblFields set unique_values=@val where clean_name=vColumn;
+
+
+set @ex=concat('select @bal:=1-(@val/count(*)) ',vcolumn,' from temp1');
+prepare stmt from @ex;
+execute stmt;
+deallocate prepare stmt;
+update tblFields set cardinality=@bal where clean_name=vColumn;
+
+
+end LOOP;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_fieldCheck` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_fieldCheck`()
+BEGIN
+	update tblFields a, (
+    select column_name, data_type from 
+    information_Schema.columns
+    where table_schema=schema()
+    and table_name='temp1') b
+    set a.data_type=b.data_type
+    where a.clean_name=b.column_name;
+    
+    call sp_cardinality();
+    update tblFields set mapsto='NONE';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -182,4 +315,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-16 10:04:22
+-- Dump completed on 2019-04-18 16:04:55
